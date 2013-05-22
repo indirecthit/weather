@@ -6,7 +6,7 @@ if isModule
   URL = require('url')
 
 class Weather
-  @VERSION: "0.0.2"
+  @VERSION: "0.0.3"
 
   @kelvinToFahrenheit: (value) ->
     (@kelvinToCelsius(value) * 1.8) + 32
@@ -14,12 +14,20 @@ class Weather
   @kelvinToCelsius: (value) ->
     value - 273.15
 
+  @getCurrentLatLng: (city, latitude,longitude) ->
+    @_getJSON "http://openweathermap.org/data/2.5/weather?lat=#{encodeURIComponent latitude}&lon=#{encodeURIComponent longitude}&cnt=1", (data) =>
+      callback new Weather.Current(data)
+
+  @getForecastLatLng: (city, latitude,longitude) ->
+    @_getJSON "http://openweathermap.org/data/2.5/forecast?lat=#{encodeURIComponent latitude}&lon=#{encodeURIComponent longitude}&cnt=1", (data) =>
+      callback new Weather.Forecast(data)
+
   @getCurrent: (city, callback) ->
-    @_getJSON "http://openweathermap.org/data/2.1/find/city?q=#{encodeURIComponent city}&cnt=1", (data) =>
+    @_getJSON "http://api.openweathermap.org/data/2.5/weather?q=#{encodeURIComponent city}&cnt=1", (data) =>
       callback new Weather.Current(data)
 
   @getForecast: (city, callback) ->
-    @_getJSON "http://openweathermap.org/data/2.1/forecast/city?q=#{encodeURIComponent city}&cnt=1", (data) =>
+    @_getJSON "http://api.openweathermap.org/data/2.5/forecast/city?q=#{encodeURIComponent city}&cnt=1", (data) =>
       callback new Weather.Forecast(data)
 
   #
